@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>Skillhunt - Free Bootstrap 4 Template by Colorlib</title>
+    <title>Talent Hunt </title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
@@ -59,7 +59,6 @@
     <div class="hero-wrap img">
         <div class="overlay">
             <div id="viewDiv"></div>
-
         </div>
         <div class="container">
             <div class="row d-md-flex no-gutters slider-text align-items-center justify-content-center">
@@ -131,17 +130,54 @@
                         <div class="tab-content p-4" id="v-pills-tabContent">
 
                             <div class="tab-pane fade show active" id="v-pills-1" role="tabpanel" aria-labelledby="v-pills-nextgen-tab">
-                                <form action="#" class="search-job">
+                                <form action="search.php" class="search-job" method="get">
                                     <div class="row no-gutters">
                                         <div class="col-md mr-md-2">
                                             <div class="form-group">
-                                                <div class="form-field">
+                                                <div class="form-field search">
                                                     <div class="icon"><span class="icon-briefcase"></span></div>
-                                                    <input type="text" class="form-control" placeholder="eg. Garphic. Web Developer">
+                                                    <input type="text" class="form-control searchTerm en" id="searchTerm_en" name="searchTerm_en" placeholder="eg. Web Developer" >
                                                 </div>
+                                                <ul class="list-group-search" id="result"></ul>
+                                                <br>
                                             </div>
                                         </div>
-                                        <div class="col-md mr-md-2">
+
+
+
+                                        <script>
+                                            const search = document.getElementById('searchTerm_en');
+                                            const matchList = document.getElementById('result');
+
+                                            const searchStates = async searchText =>{
+                                                const res = await fetch('./js/data.json');
+                                                const states = await res.json();
+
+                                                let matches = states.filter(state => {
+                                                    const regex = new RegExp(`^${searchText}`,'gi');
+                                                    return state.name.match(regex);
+                                                });
+
+                                                if(searchText.length === 0){
+                                                    matches = [];
+                                                    matchList.innerHTML = '';
+                                                }
+                                                outputHtml(matches);
+                                            };
+
+                                            const outputHtml = matches => {
+                                                if(matches.length > 0){
+                                                    const html = matches.map(match =>
+                                                        `<div class="card result-list en">
+						<h6><span class="my-result" onclick="${match.url}">${match.name}</span></h6>
+					</div>`).join('');
+                                                    matchList.innerHTML = html;
+                                                }
+                                            };
+                                            search.addEventListener('input', () => searchStates(search.value));
+                                        </script>
+
+<!--                                        <div class="col-md mr-md-2">
                                             <div class="form-group">
                                                 <div class="form-field">
                                                     <div class="select-wrap">
@@ -157,12 +193,21 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div>-->
+
                                         <div class="col-md mr-md-2">
                                             <div class="form-group">
                                                 <div class="form-field">
-                                                    <div class="icon"><span class="icon-map-marker"></span></div>
-                                                    <input type="text" class="form-control" placeholder="Location">
+                                                    <div class="icon"><span class="ion-ios-arrow-down"></span></div>
+                                                    <!--<input type="text" class="form-control" placeholder="Location">-->
+                                                    <select name="location" id="location" class="form-control">
+                                                        <option value="">Berlin</option>
+                                                        <option value="">Paris</option>
+                                                        <option value="">Stockholm</option>
+                                                        <option value="">Zagreb</option>
+                                                        <option value="">Zürich</option>
+                                                        <option value="">Milan</option>
+                                                    </select>
                                                 </div>
                                             </div>
                                         </div>
@@ -1045,10 +1090,12 @@
     <!-- <script src="js/gmaps-heatmap.js"></script> -->
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
     <script src="https://js.arcgis.com/4.15/"></script>
     <script src="js/heat-map.js"></script>
 
-    <!-- 
+    <!--
     <script type="text/javascript">
         // Load google charts
         google.charts.load('current', {
